@@ -1,0 +1,30 @@
+.POSIX:
+.SUFFIXES:
+.SUFFIXES: .cpp .coverage
+
+CXX        = @CXX@
+CCOV       = gcov
+CFLAGS     = @CFLAGS@
+CFLAGS_COV = @CFLAGS_COV@
+CFLAGS_SAN = @CFLAGS_SAN@
+
+.PHONY: all
+all: fcmp.coverage rollingmean.coverage
+
+fcmp.coverage: fcmp.cpp test_fcmp.cpp
+
+rollingmean.coverage: rollingmean.cpp test_rollingmean.cpp fcmp.cpp
+
+.cpp.coverage:
+	$(CXX) $(CFLAGS) $(CFLAGS_COV) $(CFLAGS_SAN) $^ -o $@
+	./$@
+	$(CCOV) $<
+	! grep "#####" $<.gcov |grep -ve "// UNREACHABLE$$"
+
+.PHONY: clean
+clean:
+	rm -rf *.gc?? *.coverage
+
+.PHONY: distclean
+distclean: clean
+	rm -f Makefile config.status
