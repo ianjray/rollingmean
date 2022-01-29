@@ -1,0 +1,34 @@
+.POSIX:
+.SUFFIXES:
+.SUFFIXES: .cpp .uto .coverage
+
+CXX        = @CXX@
+CCOV       = gcov
+CFLAGS     = @CFLAGS@
+CFLAGS_COV = @CFLAGS_COV@
+CFLAGS_SAN = @CFLAGS_SAN@
+
+.PHONY: all
+all: fcmp.coverage rollingmean.coverage
+
+fcmp.coverage: fcmp.cpp test_fcmp.cpp
+
+rollingmean.coverage: rollingmean.cpp test_rollingmean.cpp fcmp.cpp
+
+.c.uto:
+	$(CXX) $(CFLAGS) $(CFLAGS_COV) $(CFLAGS_SAN) -c $< -o $@
+
+.cpp.coverage:
+	$(CXX) $(CFLAGS) $(CFLAGS_COV) $(CFLAGS_SAN) -c $< -o $$(basename $< .cpp).uto
+	$(CXX) $(CFLAGS) $(CFLAGS_COV) $(CFLAGS_SAN) $$(echo $^ | sed -E -e 's/(^| )$</'$$(basename $< .cpp).uto'/g') -o $@
+	./$@
+	$(CCOV) $<
+	! grep "#####" $<.gcov
+
+.PHONY: clean
+clean:
+	rm -rf *.uto *.gc?? *.coverage
+
+.PHONY: distclean
+distclean: clean
+	rm -f Makefile config.status
