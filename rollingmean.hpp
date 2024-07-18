@@ -24,13 +24,13 @@ public:
     /// @discussion Erase all elements.
     void clear();
 
-    /// @return bool True if the FIFO has three or more elements, meaning that valid sum and mean values can be provided.
+    /// @return True if the FIFO has three or more elements, meaning that valid sum and mean values can be provided.
     /// @see sum
     /// @see mean
     bool ready() const;
 
     /// @discussion Add a value to the FIFO.
-    /// @return double Mean value if the FIFO is ready, or given @c value otherwise.
+    /// @return Mean value if the FIFO is ready, or given @c value otherwise.
     double add(double value);
 
     /// @return Sum of all non-outlier elements.

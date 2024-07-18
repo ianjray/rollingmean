@@ -18,7 +18,7 @@ struct Node
     /// Value.
     double value_;
 
-    Node() : Node{0}
+    Node() : Node{0.}
     {
     }
 
